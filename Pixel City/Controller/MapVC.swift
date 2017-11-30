@@ -17,19 +17,21 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var pullUpView: UIView!
     @IBOutlet weak var pullUpViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet weak var progressBarLbl: UILabel!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     //Varibles
     var locationManager = CLLocationManager()
     let authorizationStatus = CLLocationManager.authorizationStatus()
     let regionRadius: Double = 2000 * 2
     var screenSize = UIScreen.main.bounds
-//    var spinner: UIActivityIndicatorView?
-    var progressLbl: UILabel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
         locationManager.delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
         
         configueLocationServices()
         addDoubleTap()
@@ -57,15 +59,11 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     
     @objc func animateViewDown() {
         pullUpViewHeightConstraint.constant = 0
+        spinner.stopAnimating()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
     }
-    
-//    func addSpinner() {
-//        spinner = UIActivityIndicatorView()
-//        spinner.center = CGPoint(x: (screenSize.width / 2) - (spinner?.frame.width / 2), y: 150)
-//    }
 
     //Actions
     @IBAction func centerMapBtnPressed(_ sender: Any) {
@@ -127,6 +125,26 @@ extension MapVC: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         centerMapOnUserLocation()
+    }
+    
+}
+
+extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as? PhotoCell {
+            return cell
+        } else {
+            return UICollectionViewCell()
+        }
+        
     }
     
 }
