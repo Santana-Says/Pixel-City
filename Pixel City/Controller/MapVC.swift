@@ -107,6 +107,12 @@ extension MapVC: MKMapViewDelegate {
         
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(touchCoordinate, regionRadius, regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
+        
+        FlickrService.instance.retrieveUrls(forAnnotation: annotation) { (success) in
+            if success {
+                print(FlickrService.instance.imgUrls)
+            }
+        }
     }
     
     func removePin() {

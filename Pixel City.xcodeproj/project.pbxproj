@@ -10,6 +10,7 @@
 		B51816FF1FCF90EE00AA8EE6 /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51816FE1FCF90EE00AA8EE6 /* PhotoCell.swift */; };
 		B539C3261FCFAAB1007B8BC9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B539C3251FCFAAB1007B8BC9 /* Constants.swift */; };
 		B539C32C1FCFC9E6007B8BC9 /* config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B539C32B1FCFC9E6007B8BC9 /* config.swift */; };
+		B539C32F1FCFCC4A007B8BC9 /* FlickrService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B539C32E1FCFCC4A007B8BC9 /* FlickrService.swift */; };
 		B54E359D1FCB3102004CC094 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54E359C1FCB3102004CC094 /* AppDelegate.swift */; };
 		B54E359F1FCB3102004CC094 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54E359E1FCB3102004CC094 /* MapVC.swift */; };
 		B54E35A21FCB3102004CC094 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B54E35A01FCB3102004CC094 /* Main.storyboard */; };
@@ -24,6 +25,7 @@
 		B51816FE1FCF90EE00AA8EE6 /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
 		B539C3251FCFAAB1007B8BC9 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B539C32B1FCFC9E6007B8BC9 /* config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = config.swift; sourceTree = "<group>"; };
+		B539C32E1FCFCC4A007B8BC9 /* FlickrService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlickrService.swift; sourceTree = "<group>"; };
 		B54E35991FCB3102004CC094 /* Pixel City.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pixel City.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B54E359C1FCB3102004CC094 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B54E359E1FCB3102004CC094 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
@@ -65,6 +67,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B539C32D1FCFCBA8007B8BC9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B539C32E1FCFCC4A007B8BC9 /* FlickrService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		B54E35901FCB3102004CC094 = {
 			isa = PBXGroup;
 			children = (
@@ -86,6 +96,7 @@
 		B54E359B1FCB3102004CC094 /* Pixel City */ = {
 			isa = PBXGroup;
 			children = (
+				B539C32D1FCFCBA8007B8BC9 /* Services */,
 				B54E35B21FCB314F004CC094 /* Utilities */,
 				B54E35B11FCB3142004CC094 /* Extensions */,
 				B54E35B01FCB3133004CC094 /* Model */,
@@ -264,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B539C3261FCFAAB1007B8BC9 /* Constants.swift in Sources */,
+				B539C32F1FCFCC4A007B8BC9 /* FlickrService.swift in Sources */,
 				B51816FF1FCF90EE00AA8EE6 /* PhotoCell.swift in Sources */,
 				B54E359F1FCB3102004CC094 /* MapVC.swift in Sources */,
 				B539C32C1FCFC9E6007B8BC9 /* config.swift in Sources */,
