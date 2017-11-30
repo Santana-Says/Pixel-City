@@ -14,11 +14,17 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     
     //Outlets
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var pullUpView: UIView!
+    @IBOutlet weak var pullUpViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
     
     //Varibles
     var locationManager = CLLocationManager()
     let authorizationStatus = CLLocationManager.authorizationStatus()
     let regionRadius: Double = 2000 * 2
+    var screenSize = UIScreen.main.bounds
+//    var spinner: UIActivityIndicatorView?
+    var progressLbl: UILabel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +41,31 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         doubleTap.delegate = self
         mapView.addGestureRecognizer(doubleTap)
     }
+    
+    func addSwipe() {
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(animateViewDown))
+        swipe.direction = .down
+        pullUpView.addGestureRecognizer(swipe)
+    }
+    
+    func animateViewUp() {
+        pullUpViewHeightConstraint.constant = 300
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc func animateViewDown() {
+        pullUpViewHeightConstraint.constant = 0
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+//    func addSpinner() {
+//        spinner = UIActivityIndicatorView()
+//        spinner.center = CGPoint(x: (screenSize.width / 2) - (spinner?.frame.width / 2), y: 150)
+//    }
 
     //Actions
     @IBAction func centerMapBtnPressed(_ sender: Any) {
@@ -64,6 +95,10 @@ extension MapVC: MKMapViewDelegate {
     
     @objc func dropPin(sender: UITapGestureRecognizer) {
         removePin()
+        animateViewUp()
+        addSwipe()
+        spinner.startAnimating()
+        
         let touchPoint = sender.location(in: mapView)
         let touchCoordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
         let annotation = DroppablePin(coordinate: touchCoordinate, identifier: "droppablePin")

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13770" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13770"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -58,7 +58,14 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zPL-iT-FOO">
                                 <rect key="frame" x="0.0" y="736" width="414" height="0.0"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" id="cgN-We-pei"/>
+                                </constraints>
                             </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="YEU-XZ-rGd">
+                                <rect key="frame" x="189" y="717.66666666666663" width="37" height="37"/>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -66,13 +73,14 @@
                             <constraint firstItem="W5G-WM-hwe" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="4aM-zn-PFr"/>
                             <constraint firstItem="zPL-iT-FOO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="AUg-qL-eu3"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IhU-pi-33F" secondAttribute="trailing" constant="20" id="BU1-HN-LYN"/>
+                            <constraint firstItem="YEU-XZ-rGd" firstAttribute="centerX" secondItem="zPL-iT-FOO" secondAttribute="centerX" id="C03-IK-CQf"/>
                             <constraint firstItem="gyc-HY-9b7" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Gnq-DU-TUh"/>
+                            <constraint firstItem="YEU-XZ-rGd" firstAttribute="centerY" secondItem="zPL-iT-FOO" secondAttribute="centerY" id="HLy-vt-cg9"/>
                             <constraint firstItem="zPL-iT-FOO" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="L9o-zA-eGb"/>
                             <constraint firstItem="gyc-HY-9b7" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="OhW-VO-WvS"/>
                             <constraint firstItem="gyc-HY-9b7" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="QEs-mY-Lyc"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="IhU-pi-33F" secondAttribute="bottom" constant="20" id="Vv0-iC-JbA"/>
+                            <constraint firstItem="zPL-iT-FOO" firstAttribute="top" secondItem="IhU-pi-33F" secondAttribute="bottom" constant="20" id="Vv0-iC-JbA"/>
                             <constraint firstItem="W5G-WM-hwe" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="gPz-Dv-gLr"/>
-                            <constraint firstItem="zPL-iT-FOO" firstAttribute="top" secondItem="gyc-HY-9b7" secondAttribute="bottom" id="mCM-6d-0a5"/>
                             <constraint firstItem="gyc-HY-9b7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="wba-nj-pJf"/>
                             <constraint firstItem="W5G-WM-hwe" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="zD4-ry-Lrz"/>
                         </constraints>
@@ -80,6 +88,9 @@
                     </view>
                     <connections>
                         <outlet property="mapView" destination="gyc-HY-9b7" id="hC9-7i-aUg"/>
+                        <outlet property="pullUpView" destination="zPL-iT-FOO" id="XzT-KT-UBr"/>
+                        <outlet property="pullUpViewHeightConstraint" destination="cgN-We-pei" id="y5v-ra-L3x"/>
+                        <outlet property="spinner" destination="YEU-XZ-rGd" id="fPo-7O-pc6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
