@@ -25,6 +25,7 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     let authorizationStatus = CLLocationManager.authorizationStatus()
     let regionRadius: Double = 2000 * 2
     var screenSize = UIScreen.main.bounds
+    var imgCounter = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +36,8 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         
         configueLocationServices()
         addDoubleTap()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(MapVC.imageDidLoad(_:)), name: NOTIF_IMAGE_LOADED, object: nil)
     }
     
     func addDoubleTap() {
@@ -58,11 +61,16 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func animateViewDown() {
+        FlickrService.instance.cancelAllSessions()
         pullUpViewHeightConstraint.constant = 0
         spinner.stopAnimating()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
+    }
+    
+    @objc func imageDidLoad(_ notif: Notification){
+        progressBarLbl.text = "\(FlickrService.instance.imgArray.count)/30 PHOTOS LOADED"
     }
 
     //Actions
@@ -96,6 +104,7 @@ extension MapVC: MKMapViewDelegate {
         animateViewUp()
         addSwipe()
         spinner.startAnimating()
+        progressBarLbl.isHidden = false
         
         let touchPoint = sender.location(in: mapView)
         let touchCoordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
@@ -103,19 +112,30 @@ extension MapVC: MKMapViewDelegate {
         let annotation = DroppablePin(coordinate: touchCoordinate, identifier: "droppablePin")
         mapView.addAnnotation(annotation)
         
-        print(flickrUrl(forApiKey: API_KEY, withAnnotation: annotation, andNumberOfPhotos: 40))
+        print(flickrUrl(forApiKey: API_KEY, withAnnotation: annotation, andNumberOfPhotos: 30))
         
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(touchCoordinate, regionRadius, regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
         
         FlickrService.instance.retrieveUrls(forAnnotation: annotation) { (success) in
             if success {
-                print(FlickrService.instance.imgUrls)
+                FlickrService.instance.retrieveImages(completion: { (success) in
+                    if success {
+                        self.spinner.stopAnimating()
+                        self.progressBarLbl.isHidden = true
+                        self.collectionView.reloadData()
+                    } else {
+                        print("RETRIEVE IMAGES FAILED....")
+                    }
+                })
+            } else {
+                print("RETRIEVE URLS FAILED....")
             }
         }
     }
     
     func removePin() {
+        FlickrService.instance.cancelAllSessions()
         for annotion in mapView.annotations {
             mapView.removeAnnotation(annotion)
         }
