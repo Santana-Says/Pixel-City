@@ -99,9 +99,12 @@ extension MapVC: MKMapViewDelegate {
         
         let touchPoint = sender.location(in: mapView)
         let touchCoordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
-        let annotation = DroppablePin(coordinate: touchCoordinate, identifier: "droppablePin")
         
+        let annotation = DroppablePin(coordinate: touchCoordinate, identifier: "droppablePin")
         mapView.addAnnotation(annotation)
+        
+        print(flickrUrl(forApiKey: API_KEY, withAnnotation: annotation, andNumberOfPhotos: 40))
+        
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(touchCoordinate, regionRadius, regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
     }
