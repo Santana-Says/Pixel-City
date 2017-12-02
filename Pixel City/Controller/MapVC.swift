@@ -19,6 +19,7 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var progressBarLbl: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var progressStackView: UIStackView!
     
     //Varibles
     var locationManager = CLLocationManager()
@@ -38,6 +39,8 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         addDoubleTap()
         
         NotificationCenter.default.addObserver(self, selector: #selector(MapVC.imageDidLoad(_:)), name: NOTIF_IMAGE_LOADED, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MapVC.allImagesLoaded(_:)), name: NOTIF_DOWNLOAD_COMPLETE, object: nil)
+        registerForPreviewing(with: self, sourceView: collectionView)
     }
     
     func addDoubleTap() {
@@ -50,7 +53,7 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     func addSwipe() {
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(animateViewDown))
         swipe.direction = .down
-        pullUpView.addGestureRecognizer(swipe)
+        collectionView.addGestureRecognizer(swipe)
     }
     
     func animateViewUp() {
@@ -60,6 +63,7 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    //Objective-C Notifications
     @objc func animateViewDown() {
         FlickrService.instance.cancelAllSessions()
         pullUpViewHeightConstraint.constant = 0
@@ -70,7 +74,13 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func imageDidLoad(_ notif: Notification){
-        progressBarLbl.text = "\(FlickrService.instance.imgArray.count)/30 PHOTOS LOADED"
+        progressBarLbl.text = "\(FlickrService.instance.photoArray.count)/\(NUMBER_OF_PHOTOS_TO_VIEW) PHOTOS LOADED"
+    }
+    
+    @objc func allImagesLoaded(_ notif: Notification){
+        self.spinner.stopAnimating()
+        self.progressStackView.isHidden = true
+        self.collectionView.reloadData()
     }
 
     //Actions
@@ -87,7 +97,7 @@ extension MapVC: MKMapViewDelegate {
         if annotation is MKUserLocation {
             return nil
         }
-        let pinAnnotation = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "droppablePin")
+        let pinAnnotation = MKPinAnnotationView(annotation: annotation, reuseIdentifier: DROPPABLE_PIN)
         pinAnnotation.pinTintColor = #colorLiteral(red: 0.9771530032, green: 0.7062081099, blue: 0.1748393774, alpha: 1)
         pinAnnotation.animatesDrop = true
         return pinAnnotation
@@ -101,37 +111,23 @@ extension MapVC: MKMapViewDelegate {
     
     @objc func dropPin(sender: UITapGestureRecognizer) {
         removePin()
+        FlickrService.instance.clearArrays()
+        collectionView.reloadData()
         animateViewUp()
         addSwipe()
         spinner.startAnimating()
-        progressBarLbl.isHidden = false
+        progressStackView.isHidden = false
         
         let touchPoint = sender.location(in: mapView)
         let touchCoordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
         
-        let annotation = DroppablePin(coordinate: touchCoordinate, identifier: "droppablePin")
+        let annotation = DroppablePin(coordinate: touchCoordinate, identifier: DROPPABLE_PIN)
         mapView.addAnnotation(annotation)
-        
-        print(flickrUrl(forApiKey: API_KEY, withAnnotation: annotation, andNumberOfPhotos: 30))
         
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(touchCoordinate, regionRadius, regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
         
-        FlickrService.instance.retrieveUrls(forAnnotation: annotation) { (success) in
-            if success {
-                FlickrService.instance.retrieveImages(completion: { (success) in
-                    if success {
-                        self.spinner.stopAnimating()
-                        self.progressBarLbl.isHidden = true
-                        self.collectionView.reloadData()
-                    } else {
-                        print("RETRIEVE IMAGES FAILED....")
-                    }
-                })
-            } else {
-                print("RETRIEVE URLS FAILED....")
-            }
-        }
+        FlickrService.instance.retreivePhotos(forAnnotation: annotation) { (success) in }
     }
     
     func removePin() {
@@ -164,16 +160,37 @@ extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return FlickrService.instance.photoArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as? PhotoCell {
-            return cell
-        } else {
-            return UICollectionViewCell()
-        }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PHOTO_CELL, for: indexPath) as? PhotoCell else { return UICollectionViewCell() }
+        let imgFromIndex = FlickrService.instance.photoArray[indexPath.row].img
+        let imageView = UIImageView(image: imgFromIndex)
+        cell.addSubview(imageView)
         
+        return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let popVC = storyboard?.instantiateViewController(withIdentifier: POPVC) as? PopVC else {return}
+        popVC.initData(forImage: FlickrService.instance.photoArray[indexPath.row])
+        present(popVC, animated: true, completion: nil)
+    }
+    
+}
+
+extension MapVC: UIViewControllerPreviewingDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        guard let indexPath = collectionView.indexPathForItem(at: location), let cell = collectionView.cellForItem(at: indexPath) else {return nil}
+        guard let popVC = storyboard?.instantiateViewController(withIdentifier: POPVC) as? PopVC else {return nil}
+        
+        popVC.initData(forImage: FlickrService.instance.photoArray[indexPath.row])
+        previewingContext.sourceRect = cell.contentView.frame
+        return popVC
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        show(viewControllerToCommit, sender: self)
+    }
 }
